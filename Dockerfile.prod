@@ -1,0 +1,46 @@
+# Build stage
+FROM python:3.11-slim as builder
+
+WORKDIR /app
+
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    UV_VERSION=0.1.5
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        curl \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv properly and add to PATH
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && mv ~/.cargo/bin/uv /usr/local/bin/ \
+    && chmod +x /usr/local/bin/uv
+
+# Copy requirements
+COPY requirements.txt ./
+
+# Install dependencies with --system flag
+RUN /usr/local/bin/uv pip install --system --no-cache -r requirements.txt
+
+# Final stage
+FROM python:3.11-slim
+
+# Set working directory and Python path
+WORKDIR /app
+ENV PYTHONPATH=/app
+
+# Copy installed packages from builder
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copy application code
+COPY src/ /app/src/
+COPY requirements.txt /app/
+COPY start.sh /app/
+
+EXPOSE 8000
+
+# Use the start script as entrypoint
+CMD ["/app/start.sh"]

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  anushka:
+    build: 
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config:/app/config
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_WORKERS=1
+      - API_RELOAD=false
+      - API_DEBUG=false
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512m
+        reservations:
+          cpus: '1'
+          memory: 64m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3" 

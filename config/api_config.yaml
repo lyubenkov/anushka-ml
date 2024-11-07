@@ -1,0 +1,27 @@
+# Server settings
+server:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  reload: false
+  timeout: 60
+  workers: 1
+
+# API settings
+api:
+  title: "ML Model API"
+  description: "API for training and managing machine learning models"
+  prefix: "/api"
+  version: "v1"
+
+# Model settings
+models:
+  max_active_models: 10
+  logging_level: "INFO"
+
+# Security settings
+security:
+  api_key_header: "X-API-Key"
+  rate_limit:
+    requests: 100
+    period: 3600  # 1 hour

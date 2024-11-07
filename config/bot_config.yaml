@@ -1,0 +1,8 @@
+bot:
+  token: ""
+  api_url: "http://localhost:8000"
+
+# Optional settings
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s" 
